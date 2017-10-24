@@ -24,6 +24,7 @@ class Const: NSObject {
                                            userAgent: "zype tvos")
     
     static let kStoreURL = URL(string: "https://buy.itunes.apple.com/verifyReceipt")!
+    static let kTestStoreURL = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")!
     //static let kStoreURL = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")! // for testing only
     
     // MARK: - Feature Flags

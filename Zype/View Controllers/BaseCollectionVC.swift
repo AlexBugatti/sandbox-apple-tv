@@ -125,6 +125,7 @@ class BaseCollectionVC: UICollectionViewController {
     
     var isInfinityScrolling = false
     var sections: Array<CollectionSection>! = []
+    var pagination: Bool = false
     var itemFocusedCallback: ((_ item: CollectionLabeledItem, _ section: CollectionSection) -> Void)!
     var itemSelectedCallback: ((_ item: CollectionLabeledItem, _ section: CollectionSection) -> Void)!
     var prepareForReuseCallback: (() -> Void)!
@@ -280,6 +281,9 @@ extension BaseCollectionVC {
         if self.isInfinityScrolling && self.sections[section].items.count > 0 {
             return BaseCollectionVC.maxCellIndex
         }
+        if self.pagination == true {
+            return self.sections[section].controller == nil ? self.sections[section].items.count + 1 : 2
+        }
         return self.sections[section].controller == nil ? self.sections[section].items.count : 1
     }
     
@@ -294,6 +298,14 @@ extension BaseCollectionVC {
                 reusableController.prepareForReuse()
             }
             return cell
+        }
+        
+        if self.pagination == true {
+            if indexPath.row == self.sections[indexPath.section].items.count {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PagerCell", for: indexPath) as! PagerCell
+                cell.configWithImageName("ViewMore")
+                return cell
+            }
         }
         
         let data = section.items[self.isInfinityScrolling ? (indexPath.row % self.sections[indexPath.section].items.count) : indexPath.row]
@@ -325,6 +337,11 @@ extension BaseCollectionVC {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if self.pagination == true && indexPath.row == self.sections[indexPath.section].items.count {
+            
+        }
+        
         self.lastSelectedItemIndexPath = indexPath
         if(self.itemSelectedCallback != nil){
             let section = self.sections[indexPath.section]

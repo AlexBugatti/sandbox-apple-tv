@@ -15,9 +15,12 @@ class MyLibraryVC: CollectionContainerVC {
     @IBOutlet var dataView: UIView!
     @IBOutlet var signInButton: UIButton!
     
+    private var page = 2
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tabBarItem.title = localized("MyLibrary.TabTitle")
+        self.collectionVC.pagination = true
         //self.collectionVC.collectionView?.contentInset.top = Const.kBaseSectionInsets.top
         // Do any additional setup after loading the view.
     }
@@ -25,6 +28,8 @@ class MyLibraryVC: CollectionContainerVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.hideInfo()
+        self.collectionVC.pagination = true
+        self.page = 1
         self.getLibrary()
     }
     
@@ -49,7 +54,7 @@ class MyLibraryVC: CollectionContainerVC {
     func getLibrary() {
         
         if (ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true) {
-            ZypeAppleTVBase.sharedInstance.getMyLibrary({ (videos, error) -> Void in
+            ZypeAppleTVBase.sharedInstance.getMyLibrary(page: self.page, { (videos, error) -> Void in
                 //print(videos?.count)
                 let section = CollectionSection()
                 section.headerStyle = .centered
