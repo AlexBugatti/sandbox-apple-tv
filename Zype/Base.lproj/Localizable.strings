@@ -25,7 +25,7 @@
 
 "MyLibrary.TabTitle" = "MyLibrary";
 "MyLibrary.Title" = "MyLibrary";
-"MyLibrary.EmptyLibrary" = "MyLibrary";
+"MyLibrary.EmptyLibrary" = "MyLibrary is empty";
 "MyLibrary.LoginNeededMsg" = "Please LogIn to get My Library list";
 
 "Login.TabTitle" = "Account";

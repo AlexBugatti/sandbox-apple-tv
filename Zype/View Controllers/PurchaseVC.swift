@@ -33,9 +33,20 @@ class PurchaseVC: UIViewController {
     }
     
     func onPlanSelected(sender: UIButton) {
-        if let identifier = sender.accessibilityIdentifier {
-            self.purchase(identifier)
+        
+        if !ZypeUtilities.isDeviceLinked() {
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(onPurchased),
+                                                   name: NSNotification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted),
+                                                   object: nil)
+            ZypeUtilities.presentRegisterVC(self)
         }
+        else {
+            if let identifier = sender.accessibilityIdentifier {
+                self.purchase(identifier)
+            }
+        }
+        
         print("\n\n HELLO PURCHASE WORLD \n\n")
         print(sender.tag)
     }
@@ -78,6 +89,10 @@ class PurchaseVC: UIViewController {
     
     @IBAction func onSignIn(_ sender: Any) {
         ZypeUtilities.presentLoginVC(self)
+    }
+    
+    func onPurchased() {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

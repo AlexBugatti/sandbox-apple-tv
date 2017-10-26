@@ -14,7 +14,7 @@ class Const: NSObject {
     
     static var productIdentifiers = ["monthly_subscription", "yearly_subscription"]
     
-    static var appstorePassword = ""
+    static var appstorePassword = "ead5fc19c42045cfa783e24d6e5a2325"
     
     static let sdkSettings = SettingsModel(clientID: "b3589bcfffad139cd61be701ce30928c118c12730af3c462c5c1e884e8944e03",
                                            secret: "3da57d2c71655d9309811d2f4bfc0191d15d33659f7a84e02f87d15edc60a372",
@@ -24,17 +24,17 @@ class Const: NSObject {
                                            userAgent: "zype tvos")
     
     static let kStoreURL = URL(string: "https://buy.itunes.apple.com/verifyReceipt")!
-    //static let kStoreURL = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")! // for testing only
+    static let kTestStoreURL = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")! // for testing only
     
     // MARK: - Feature Flags
     
-    static let kNativeSubscriptionEnabled = true
+    static let kNativeSubscriptionEnabled = false
     static let kLimitLivestreamEnabled = false
     static let kFavoritesViaAPI = true
     static let kLockIcons = false
     static let kSubscribeToWatchAdFree = false
-    static let kNativeToUniversal = false
-    static let kUniversalTvod = true
+    static let kNativeToUniversal = true
+    static let kUniversalTvod = false
     
     // MARK: - UI Constants
     

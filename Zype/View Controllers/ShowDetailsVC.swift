@@ -267,20 +267,29 @@ class ShowDetailsVC: CollectionContainerVC {
     fileprivate func handleSubscribe() {
         if Const.kNativeSubscriptionEnabled {
             if !InAppPurchaseManager.sharedInstance.lastSubscribeStatus {
-                let purchaseVC = self.storyboard?.instantiateViewController(withIdentifier: "PurchaseVC") as! PurchaseVC
-                
-                InAppPurchaseManager.sharedInstance.requestProducts({ _ in
-                    NotificationCenter.default.addObserver(self,
-                                                           selector: #selector(ShowDetailsVC.onPurchased),
-                                                           name: NSNotification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted),
-                                                           object: nil)
-                    self.navigationController?.present(purchaseVC, animated: true, completion: nil)
-                })
+                self.presentPurchaseVC()
+            }
+        }
+        if Const.kNativeToUniversal {
+            if !InAppPurchaseManager.sharedInstance.lastSubscribeStatus {
+                self.presentPurchaseVC()
             }
         }
         else {
             ZypeUtilities.presentLoginVC(self)
         }
+    }
+    
+    fileprivate func presentPurchaseVC() {
+        let purchaseVC = self.storyboard?.instantiateViewController(withIdentifier: "PurchaseVC") as! PurchaseVC
+        
+        InAppPurchaseManager.sharedInstance.requestProducts({ _ in
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(ShowDetailsVC.onPurchased),
+                                                   name: NSNotification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted),
+                                                   object: nil)
+            self.navigationController?.present(purchaseVC, animated: true, completion: nil)
+        })
     }
     
     fileprivate func handleFavorites() {
@@ -354,7 +363,7 @@ extension ShowDetailsVC {
     
     fileprivate func getPlaySubscribeButton() -> ButtonType {
         if selectedVideo.subscriptionRequired {
-            if Const.kNativeSubscriptionEnabled {
+            if Const.kNativeSubscriptionEnabled || Const.kNativeToUniversal {
                 if !InAppPurchaseManager.sharedInstance.lastSubscribeStatus {
                     return .subscribe
                 }

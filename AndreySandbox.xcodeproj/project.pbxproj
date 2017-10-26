@@ -61,6 +61,7 @@
 		F5E6DA3F1BCEB03A00BE842B /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E6DA3E1BCEB03A00BE842B /* SearchVC.swift */; };
 		FA01D4CE1F8EBB0200A8D131 /* MyLibraryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D4CD1F8EBB0200A8D131 /* MyLibraryVC.swift */; };
 		FA01D4D01F902A7900A8D131 /* Array+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D4CF1F902A7900A8D131 /* Array+Unique.swift */; };
+		FAF77F181FA263230065BCC1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAF77F171FA263230065BCC1 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -155,6 +156,7 @@
 		F6BD79C61A941BD445569503 /* Pods_AndreySandbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AndreySandbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA01D4CD1F8EBB0200A8D131 /* MyLibraryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLibraryVC.swift; sourceTree = "<group>"; };
 		FA01D4CF1F902A7900A8D131 /* Array+Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Unique.swift"; sourceTree = "<group>"; };
+		FAF77F171FA263230065BCC1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9428996EBB9F1BD8B8F9868 /* Pods_AndreySandbox.framework in Frameworks */,
+				FAF77F181FA263230065BCC1 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +175,7 @@
 		158A02611DB17476F82508C3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAF77F171FA263230065BCC1 /* StoreKit.framework */,
 				F6BD79C61A941BD445569503 /* Pods_AndreySandbox.framework */,
 			);
 			name = Frameworks;
@@ -418,6 +422,11 @@
 					F553AD1F1BC660B400A093EF = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = 66JU87JGLE;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

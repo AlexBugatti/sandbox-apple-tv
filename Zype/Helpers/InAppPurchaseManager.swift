@@ -8,6 +8,7 @@
 
 import UIKit
 import StoreKit
+import ZypeAppleTVBase
 
 extension SKProduct {
     func localizedPrice() -> String {
@@ -157,10 +158,26 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
     }
     
     func refreshSubscriptionStatus() {
+        if Const.kNativeToUniversal {
+            if (ZypeAppleTVBase.sharedInstance.consumer?.subscriptionCount)! > 0 && ZypeUtilities.isDeviceLinked() {
+                self.setSubscriptionStatus(isSubscribed: true)
+                return
+            }
+            self.setSubscriptionStatus(isSubscribed: false)
+        }
+        
+        guard Const.kNativeSubscriptionEnabled else { return }
         self.checkSubscription({ (isSubscripted: Bool, expirationDate: Date?, error: NSError?) in
             self.setSubscriptionStatus(isSubscribed: isSubscripted)
         })
     }
+    
+//    func refreshSubscriptionStatus() {
+//
+//        self.checkSubscription({ (isSubscripted: Bool, expirationDate: Date?, error: NSError?) in
+//            self.setSubscriptionStatus(isSubscribed: isSubscripted)
+//        })
+//    }
     
     func setSubscriptionStatus(isSubscribed: Bool) {
         self.lastSubscribeStatus = isSubscribed
@@ -173,7 +190,7 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
             let receiptDictionary = ["receipt-data" : receiptData.base64EncodedString(),
                                      "password" : Const.appstorePassword]
             let requestData = try! JSONSerialization.data(withJSONObject: receiptDictionary, options: [])
-            var storeRequest = URLRequest(url: Const.kStoreURL)
+            var storeRequest = URLRequest(url: Const.kTestStoreURL)
             storeRequest.httpMethod = "POST"
             storeRequest.httpBody = requestData
             let session = URLSession(configuration: URLSessionConfiguration.default)
@@ -266,18 +283,100 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
         for transaction: AnyObject in transactions {
             if let trans:SKPaymentTransaction = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
-                case .purchased, .restored, .failed:
-                    if trans.transactionState != .failed {
-                        NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
-                        InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
-                    }
-                    SKPaymentQueue.default().finishTransaction(trans)
+                case .purchased:
+                    
+                    //NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
+                    //InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+                    //SKPaymentQueue.default().finishTransaction(trans)
+                    
+                    self.verifyBiFrost({ (success) in
+                        if success {
+                            InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+                            SKPaymentQueue.default().finishTransaction(trans)
+                            self.refreshSubscriptionStatus()
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kUnspinForPurchase"), object: nil)
+                            NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
+                        }
+                        else {
+                            //TODO: - handle error
+                            print("-❄️ BiFrost ❄️-\n-Something went wrong-\n-❄️ BiFrost ❄️-")
+                        }
+                    })
+                    
+                    break
+                case .restored:
+                    break
+                case .failed:
+                    print(trans.error?.localizedDescription)
                     break
                 default:
                     break
                 }
             }
         }
+    }
+    
+    fileprivate func verifyBiFrost(_ callback: @escaping (_ success: Bool) -> ()) { // completion
+        let biFrost: URL = URL(string: "https://bifrost.stg.zype.com/api/v1/subscribe")!
+        let consumerId = UserDefaults.standard.object(forKey: "kConsumerId")
+        let thirdPartyId = "app123"
+        let deviceType = "ios"
+        guard let receipt = receiptURL()?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) else { return }
+        let sharedKey = Const.appstorePassword
+        let appKey = Const.sdkSettings.appKey
+        
+        let biFrostDict: [String : Any] = ["consumer_id" : consumerId != nil ? consumerId! : "",
+                                           "third_party_id" : thirdPartyId,
+                                           "device_type" : deviceType,
+                                           "receipt" : receipt,
+                                           "shared_key" : sharedKey,
+                                           "app_key" : appKey]
+        
+        let requestData = try! JSONSerialization.data(withJSONObject: biFrostDict, options: [])
+        var storeRequest = URLRequest(url: biFrost)
+        storeRequest.httpMethod = "POST"
+        storeRequest.httpBody = requestData
+        storeRequest.setValue("application/json", forHTTPHeaderField: "Content-type")
+        storeRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        let session = URLSession(configuration: .default)
+        
+        let task = session.dataTask(with: storeRequest) { (data, response, error) in
+            if error != nil {
+                print(error?.localizedDescription ?? "-❄️ BiFrost ❄️-\n-Something went wrong-\n-❄️ BiFrost ❄️-")
+            }
+            
+            if response != nil {
+                print("----- RESPONSE -------")
+                print("----- RESPONSE -------")
+                print("----- RESPONSE -------")
+                print(response)
+            }
+            
+            if data != nil {
+                let json = try? JSONSerialization.jsonObject(with: data!, options: [])
+                if let responseDict = json as? [String: Bool] {
+                    if let valid = responseDict["is_valid"] {
+                        if valid {
+                            //                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseSuccessfulNotification"), object: nil)
+                            print("IS VALID")
+                            print("IS VALID")
+                            InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+//                            ZypeUtilities.loginUser({ _ in
+//                                callback(true)
+//                            })
+                            
+                        }
+                        else {
+                            //                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseNotSuccessfulNotification"), object: nil)
+                            print("IS NOT VALID")
+                            print("IS NOT VALID")
+                            callback(false)
+                        }
+                    }
+                }
+            }
+        }
+        task.resume()
     }
     
     // MARK: - JSON Helpers
