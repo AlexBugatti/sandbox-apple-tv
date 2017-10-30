@@ -288,7 +288,7 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
                     //NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
                     //InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
                     //SKPaymentQueue.default().finishTransaction(trans)
-                    
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kSpinForPurchase"), object: nil)
                     self.verifyBiFrost({ (success) in
                         if success {
                             InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
@@ -347,32 +347,33 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
             
             if response != nil {
                 print("----- RESPONSE -------")
-                print("----- RESPONSE -------")
-                print("----- RESPONSE -------")
                 print(response)
             }
             
             if data != nil {
                 let json = try? JSONSerialization.jsonObject(with: data!, options: [])
                 if let responseDict = json as? [String: Bool] {
-                    if let valid = responseDict["is_valid"] {
-                        if valid {
-                            //                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseSuccessfulNotification"), object: nil)
-                            print("IS VALID")
-                            print("IS VALID")
-                            InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
-//                            ZypeUtilities.loginUser({ _ in
-//                                callback(true)
-//                            })
-                            
+                    
+                    if let success = responseDict["success"] {
+                        if success {
+                            if let valid = responseDict["is_valid"] {
+                                if valid {
+                                    print("IS VALID")
+                                    InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+                                    callback(true)
+                                } else {
+                                    print("IS NOT VALID")
+                                    callback(false)
+                                }
+                            }
+                        } else {
+                           callback(false)
                         }
-                        else {
-                            //                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseNotSuccessfulNotification"), object: nil)
-                            print("IS NOT VALID")
-                            print("IS NOT VALID")
-                            callback(false)
-                        }
+                    } else {
+                        callback(false)
                     }
+                } else {
+                    callback(false)
                 }
             }
         }
