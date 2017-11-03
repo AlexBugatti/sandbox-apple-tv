@@ -150,20 +150,23 @@ class PurchaseVC: UIViewController {
     }
     
     func spinForPurchase() {
-        self.activityIndicator.transform = CGAffineTransform(scaleX: 3, y: 3)
-        self.activityIndicator.isHidden = false
-        self.activityIndicator.startAnimating()
-        
-        for view in self.view.subviews {
-            view.isUserInteractionEnabled = false
+        DispatchQueue.main.async {
+            self.activityIndicator.transform = CGAffineTransform(scaleX: 3, y: 3)
+            self.activityIndicator.isHidden = false
+            self.activityIndicator.startAnimating()
+            
+            for view in self.view.subviews {
+                view.isUserInteractionEnabled = false
+            }
         }
     }
     
     func unspinForPurchase() {
-        self.activityIndicator.stopAnimating()
-        
-        for view in self.view.subviews {
-            view.isUserInteractionEnabled = true
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            for view in self.view.subviews {
+                view.isUserInteractionEnabled = true
+            }
         }
     }
     

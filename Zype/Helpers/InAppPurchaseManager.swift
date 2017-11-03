@@ -284,29 +284,27 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
             if let trans:SKPaymentTransaction = transaction as? SKPaymentTransaction {
                 switch trans.transactionState {
                 case .purchased:
+                    SKPaymentQueue.default().finishTransaction(trans)
+                    if Const.kNativeToUniversal {
+                        self.verifyUniversalSubscriptions()
+                        break
+                    }
                     
-                    //NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
-                    //InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
-                    //SKPaymentQueue.default().finishTransaction(trans)
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kSpinForPurchase"), object: nil)
-                    self.verifyBiFrost({ (success) in
-                        if success {
-                            InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
-                            SKPaymentQueue.default().finishTransaction(trans)
-                            self.refreshSubscriptionStatus()
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kUnspinForPurchase"), object: nil)
-                            NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
-                        }
-                        else {
-                            //TODO: - handle error
-                            print("-❄️ BiFrost ❄️-\n-Something went wrong-\n-❄️ BiFrost ❄️-")
-                        }
-                    })
+                    if Const.kNativeSubscriptionEnabled {
+                        self.verifyNativeSubscriptions()
+                        break
+                    }
                     
                     break
                 case .restored:
+                    SKPaymentQueue.default().finishTransaction(trans)
+                    if Const.kNativeSubscriptionEnabled {
+                        self.verifyNativeSubscriptions()
+                        break
+                    }
                     break
                 case .failed:
+                    SKPaymentQueue.default().finishTransaction(trans)
                     print(trans.error?.localizedDescription)
                     break
                 default:
@@ -316,8 +314,36 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
         }
     }
     
+    func verifyNativeSubscriptions() {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
+        InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+        self.refreshSubscriptionStatus()
+    }
+    
+    func verifyUniversalSubscriptions() {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kSpinForPurchase"), object: nil)
+        self.verifyBiFrost({ (success) in
+            if success {
+                ZypeAppleTVBase.sharedInstance.login({ (complete, error) in
+                    if complete {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kUnspinForPurchase"), object: nil)
+                        self.refreshSubscriptionStatus()
+                    }
+                })
+                InAppPurchaseManager.sharedInstance.lastSubscribeStatus = true
+                
+                NotificationCenter.default.post(name: Notification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted), object: nil)
+            }
+            else {
+                //TODO: - handle error
+                print("-❄️ BiFrost ❄️-\n-Something went wrong-\n-❄️ BiFrost ❄️-")
+            }
+        })
+    }
+    
     fileprivate func verifyBiFrost(_ callback: @escaping (_ success: Bool) -> ()) { // completion
         let biFrost: URL = URL(string: "https://bifrost.stg.zype.com/api/v1/subscribe")!
+        let biFrostProd: URL = URL(string: "https://bifrost.stg.zype.com/api/v1/subscribe")!
         let consumerId = UserDefaults.standard.object(forKey: "kConsumerId")
         let thirdPartyId = "app123"
         let deviceType = "ios"
@@ -333,7 +359,7 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
                                            "app_key" : appKey]
         
         let requestData = try! JSONSerialization.data(withJSONObject: biFrostDict, options: [])
-        var storeRequest = URLRequest(url: biFrost)
+        var storeRequest = URLRequest(url: biFrostProd)
         storeRequest.httpMethod = "POST"
         storeRequest.httpBody = requestData
         storeRequest.setValue("application/json", forHTTPHeaderField: "Content-type")

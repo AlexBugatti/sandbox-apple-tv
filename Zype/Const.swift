@@ -28,12 +28,12 @@ class Const: NSObject {
     
     // MARK: - Feature Flags
     
-    static let kNativeSubscriptionEnabled = false
+    static let kNativeSubscriptionEnabled = true
     static let kLimitLivestreamEnabled = false
     static let kFavoritesViaAPI = true
     static let kLockIcons = false
     static let kSubscribeToWatchAdFree = false
-    static let kNativeToUniversal = true
+    static let kNativeToUniversal = false
     static let kUniversalTvod = false
     
     // MARK: - UI Constants

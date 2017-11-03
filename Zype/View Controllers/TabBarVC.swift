@@ -55,28 +55,28 @@ class TabBarVC: UITabBarController {
     
     func modifyTabs() {
         if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true {
-            self.addLogoutScreen()
+            self.addSettingsScreen()
         }
         else {
-            self.removeLogoutScreen()
+            self.removeSettingsScreen()
         }
     }
     
-    func addLogoutScreen() {
+    func addSettingsScreen() {
         if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true {
-            let logoutVC = ZypeUtilities.getLogoutVC()
-            if (logoutVC != nil) {
-                self.viewControllers?.append(logoutVC!)
+            let settingsVC = self.storyboard?.instantiateViewController(withIdentifier: "SettingsVC") as? SettingsVC
+            if (settingsVC != nil) {
+                self.viewControllers?.append(settingsVC!)
                 let position = (self.tabBar.items?.count)! - 1
                 self.tabBar.items![position].title = "Settings"
             }
         }
     }
     
-    func removeLogoutScreen() {
+    func removeSettingsScreen() {
         var needToBeRemoved = false
         for vc in self.viewControllers! {
-            if (vc is LogoutVC){
+            if (vc is SettingsVC){
                 needToBeRemoved = true
             }
         }

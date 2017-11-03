@@ -268,6 +268,7 @@ class ShowDetailsVC: CollectionContainerVC {
         if Const.kNativeSubscriptionEnabled {
             if !InAppPurchaseManager.sharedInstance.lastSubscribeStatus {
                 self.presentPurchaseVC()
+                return
             }
         }
         if Const.kNativeToUniversal {
