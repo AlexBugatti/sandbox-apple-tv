@@ -172,13 +172,6 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
         })
     }
     
-//    func refreshSubscriptionStatus() {
-//
-//        self.checkSubscription({ (isSubscripted: Bool, expirationDate: Date?, error: NSError?) in
-//            self.setSubscriptionStatus(isSubscribed: isSubscripted)
-//        })
-//    }
-    
     func setSubscriptionStatus(isSubscribed: Bool) {
         self.lastSubscribeStatus = isSubscribed
     }
