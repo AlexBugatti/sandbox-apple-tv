@@ -15,7 +15,8 @@ class Const: NSObject {
     static var productIdentifiers = ["monthly_subscription", "yearly_subscription"]
     
     static var appstorePassword = "ead5fc19c42045cfa783e24d6e5a2325"
-    
+    static let MonthlyThirdPartyId = "app123"
+    static let YearlyThirdPartyId = "appletvyearly"
     static let sdkSettings = SettingsModel(clientID: "b3589bcfffad139cd61be701ce30928c118c12730af3c462c5c1e884e8944e03",
                                            secret: "3da57d2c71655d9309811d2f4bfc0191d15d33659f7a84e02f87d15edc60a372",
                                            appKey: "IKuC8xERY-oYRxQfE6c1HSeRrxKcpCwcsPr614RfaxCkYsJLgwpBkpkEo88EsyWr",
@@ -30,7 +31,7 @@ class Const: NSObject {
     
     static let kNativeSubscriptionEnabled = false
     static let kLimitLivestreamEnabled = false
-    static let kFavoritesViaAPI = true
+    static let kFavoritesViaAPI = false
     static let kLockIcons = false
     static let kSubscribeToWatchAdFree = false
     static let kNativeToUniversal = true

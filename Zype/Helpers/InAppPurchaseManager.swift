@@ -279,7 +279,7 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
                 case .purchased:
                     SKPaymentQueue.default().finishTransaction(trans)
                     if Const.kNativeToUniversal {
-                        self.verifyUniversalSubscriptions()
+                        self.verifyUniversalSubscriptions(productID: trans.payment.productIdentifier)
                         break
                     }
                     
@@ -313,9 +313,9 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
         self.refreshSubscriptionStatus()
     }
     
-    func verifyUniversalSubscriptions() {
+    func verifyUniversalSubscriptions(productID: String) {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "kSpinForPurchase"), object: nil)
-        self.verifyBiFrost({ (success) in
+        self.verifyBiFrost(productID: productID, { (success) in
             if success {
                 ZypeAppleTVBase.sharedInstance.login({ (complete, error) in
                     if complete {
@@ -334,12 +334,22 @@ class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver {
         })
     }
     
-    fileprivate func verifyBiFrost(_ callback: @escaping (_ success: Bool) -> ()) { // completion
+    fileprivate func verifyBiFrost(productID: String, _ callback: @escaping (_ success: Bool) -> ()) { // completion
         let biFrost: URL = URL(string: "https://bifrost.stg.zype.com/api/v1/subscribe")!
         let biFrostProd: URL = URL(string: "https://bifrost.stg.zype.com/api/v1/subscribe")!
         let consumerId = UserDefaults.standard.object(forKey: "kConsumerId")
-        let thirdPartyId = "app123"
-        let deviceType = "ios"
+        var thirdPartyId = ""
+        switch productID {
+        case "monthly_subscription":
+            thirdPartyId = Const.MonthlyThirdPartyId
+            break
+        case "yearly_subscription":
+            thirdPartyId = Const.YearlyThirdPartyId
+            break
+        default:
+            break
+        }
+        let deviceType = "appletv"
         guard let receipt = receiptURL()?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) else { return }
         let sharedKey = Const.appstorePassword
         let appKey = Const.sdkSettings.appKey

@@ -11,6 +11,7 @@ import ZypeAppleTVBase
 
 class SettingsVC: UIViewController {
 
+    @IBOutlet var loginButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var logoutTitle: UILabel!
     @IBOutlet weak var logoutFooter: UILabel!
@@ -19,6 +20,7 @@ class SettingsVC: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.checkLoginStatus), name: NSNotification.Name(rawValue: kZypeReloadScreenNotification), object: nil)
         //self.configureView()
         self.setupText()
     }
@@ -26,15 +28,17 @@ class SettingsVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.checkSubsciptionStatus()
+        self.checkLoginStatus()
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(self.checkSubsciptionStatus),
                                                name: NSNotification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted),
                                                object: nil)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
+        //NotificationCenter.default.removeObserver(self)
     }
     
     func setupText() {
@@ -67,9 +71,22 @@ class SettingsVC: UIViewController {
         
         NotificationCenter.default.post(name: Notification.Name(rawValue: kZypeReloadScreenNotification), object: nil)
     }
+    
+    @IBAction func loginClicked(_ sender: Any) {
+        ZypeUtilities.presentLoginVC(self)
+    }
+    
 
     @IBAction func restorePurchaseClicked(_ sender: Any) {
         InAppPurchaseManager.sharedInstance.restorePurchases()
+    }
+    
+    func checkLoginStatus() {
+        if let isLoggedIn = ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn {
+            self.loginButton.isHidden = isLoggedIn
+            self.logoutButton.isHidden = !isLoggedIn
+            self.logoutTitle.text = isLoggedIn ? "Unlink your device" : "Link your device"
+        }
     }
     
     func checkSubsciptionStatus() {
@@ -96,7 +113,6 @@ class SettingsVC: UIViewController {
                 }
             }
         }
-        
     }
     
 }

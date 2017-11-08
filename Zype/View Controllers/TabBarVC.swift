@@ -46,6 +46,18 @@ class TabBarVC: UITabBarController {
         
     }
     
+    func isSettingItemEnabled() -> Bool {
+        if let items = self.tabBar.items {
+            for item in items {
+                if item.title == "Settings" {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
     func loadDynamicData() {
         if Const.kUniversalTvod == true {
             self.addMyLibraryScreen()
@@ -54,19 +66,30 @@ class TabBarVC: UITabBarController {
     }
     
     func modifyTabs() {
-        if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true {
-            self.addSettingsScreen()
+        if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true ||
+            Const.kNativeSubscriptionEnabled == true ||
+            Const.kNativeToUniversal == true ||
+            Const.kFavoritesViaAPI == true  {
+            if self.isSettingItemEnabled() == false {
+                self.addSettingsScreen()
+            }
         }
         else {
-            self.removeSettingsScreen()
+            if self.isSettingItemEnabled() == true {
+                self.removeSettingsScreen()
+            }
         }
     }
     
     func addSettingsScreen() {
-        if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true {
+        if ZypeAppleTVBase.sharedInstance.consumer?.isLoggedIn == true ||
+            Const.kNativeSubscriptionEnabled == true ||
+            Const.kNativeToUniversal == true ||
+            Const.kFavoritesViaAPI == true {
             let settingsVC = self.storyboard?.instantiateViewController(withIdentifier: "SettingsVC") as? SettingsVC
             if (settingsVC != nil) {
-                self.viewControllers?.append(settingsVC!)
+                let navController = UINavigationController.init(rootViewController: settingsVC!)
+                self.viewControllers?.append(navController)
                 let position = (self.tabBar.items?.count)! - 1
                 self.tabBar.items![position].title = "Settings"
             }
