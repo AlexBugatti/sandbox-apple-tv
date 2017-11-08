@@ -90,11 +90,10 @@ class SettingsVC: UIViewController {
     }
     
     func checkSubsciptionStatus() {
-        
         if Const.kNativeToUniversal {
             if let subscriptionCount = ZypeAppleTVBase.sharedInstance.consumer?.subscriptionCount {
                 if subscriptionCount > 0 {
-                    self.expireDateTitle.text = "Subscribed"
+                    self.checkSubscription()
                     return
                 } else {
                     self.expireDateTitle.text = "Not subscriptions"
@@ -103,13 +102,21 @@ class SettingsVC: UIViewController {
         }
         
         if Const.kNativeSubscriptionEnabled {
-            InAppPurchaseManager.sharedInstance.checkSubscription { (isExpired, expirationDate, error) in
-                if expirationDate != nil {
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "MMMM dd, YYYY"
-                    self.expireDateTitle.text = "Expires on \(dateFormatter.string(from: expirationDate!))"
-                } else {
+            self.checkSubscription()
+        }
+    }
+    
+    func checkSubscription() {
+        InAppPurchaseManager.sharedInstance.checkSubscription { (isExpired, expirationDate, error) in
+            if expirationDate != nil {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MMMM dd, YYYY"
+                self.expireDateTitle.text = "Expires on \(dateFormatter.string(from: expirationDate!))"
+            } else {
+                if Const.kNativeSubscriptionEnabled {
                     self.expireDateTitle.text = "Not subscriptions"
+                } else if Const.kNativeToUniversal {
+                    self.expireDateTitle.text = "Subscribed"
                 }
             }
         }
