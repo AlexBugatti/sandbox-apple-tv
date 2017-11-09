@@ -20,8 +20,6 @@ class SettingsVC: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.checkLoginStatus), name: NSNotification.Name(rawValue: kZypeReloadScreenNotification), object: nil)
-        //self.configureView()
         self.setupText()
     }
     
@@ -33,12 +31,12 @@ class SettingsVC: UIViewController {
                                                selector: #selector(self.checkSubsciptionStatus),
                                                name: NSNotification.Name(rawValue: InAppPurchaseManager.kPurchaseCompleted),
                                                object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.checkLoginStatus), name: NSNotification.Name(rawValue: kZypeReloadScreenNotification), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func setupText() {
