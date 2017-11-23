@@ -61,6 +61,8 @@
 		F5E6DA3F1BCEB03A00BE842B /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E6DA3E1BCEB03A00BE842B /* SearchVC.swift */; };
 		FA01D4CE1F8EBB0200A8D131 /* MyLibraryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D4CD1F8EBB0200A8D131 /* MyLibraryVC.swift */; };
 		FA01D4D01F902A7900A8D131 /* Array+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01D4CF1F902A7900A8D131 /* Array+Unique.swift */; };
+		FAD19CD31FA9259500956052 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD19CD21FA9259500956052 /* SettingsVC.swift */; };
+		FAF77F181FA263230065BCC1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAF77F171FA263230065BCC1 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -155,6 +157,8 @@
 		F6BD79C61A941BD445569503 /* Pods_AndreySandbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AndreySandbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA01D4CD1F8EBB0200A8D131 /* MyLibraryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyLibraryVC.swift; sourceTree = "<group>"; };
 		FA01D4CF1F902A7900A8D131 /* Array+Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Unique.swift"; sourceTree = "<group>"; };
+		FAD19CD21FA9259500956052 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		FAF77F171FA263230065BCC1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9428996EBB9F1BD8B8F9868 /* Pods_AndreySandbox.framework in Frameworks */,
+				FAF77F181FA263230065BCC1 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +177,7 @@
 		158A02611DB17476F82508C3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FAF77F171FA263230065BCC1 /* StoreKit.framework */,
 				F6BD79C61A941BD445569503 /* Pods_AndreySandbox.framework */,
 			);
 			name = Frameworks;
@@ -339,6 +345,7 @@
 				F5D98CE71BE3BFBB00C986B4 /* TabBarVC.swift */,
 				A1C0CF141E37CF8A007ED6C0 /* SplashScreenVC.swift */,
 				473C514F1EE9A37B0051FC6C /* PurchaseVC.swift */,
+				FAD19CD21FA9259500956052 /* SettingsVC.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -418,6 +425,11 @@
 					F553AD1F1BC660B400A093EF = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = 66JU87JGLE;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -513,6 +525,7 @@
 				F5582CD21BC818CA0089E5E7 /* ShowDetailsVC.swift in Sources */,
 				FA01D4CE1F8EBB0200A8D131 /* MyLibraryVC.swift in Sources */,
 				473C51501EE9A37B0051FC6C /* PurchaseVC.swift in Sources */,
+				FAD19CD31FA9259500956052 /* SettingsVC.swift in Sources */,
 				A1C0CF171E37CFA1007ED6C0 /* ReplaceSegue.swift in Sources */,
 				F55957DB1BD7D1B2004A01A9 /* SDKHelpers.swift in Sources */,
 				F5534D271BCFEB8200BEA509 /* CollectionContainerVC.swift in Sources */,
