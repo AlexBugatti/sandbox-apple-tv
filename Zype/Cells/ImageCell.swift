@@ -48,6 +48,19 @@ class ImageCell: UICollectionViewCell {
         self.imageView.image = nil
     }
     
+//    override func shouldUpdateFocus(in context: UIFocusUpdateContext) -> Bool {
+//        
+//        if let nextView = context.nextFocusedView, let prevView = context.previouslyFocusedView {
+//            if prevView.isKind(of: PagerCell.self) {
+//                nextView.setNeedsFocusUpdate()
+//            }
+//        }
+//        
+//        print(context.nextFocusedView)
+//        print(context.previouslyFocusedView)
+//        return true
+//    }
+    
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         super.didUpdateFocus(in: context, with: coordinator)
         coordinator.addCoordinatedAnimations({ [unowned self] in
